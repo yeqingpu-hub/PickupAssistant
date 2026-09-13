@@ -37,11 +37,26 @@ jobs:
 
       - name: Fix JVM target
         run: |
-          find "$PROJECT_DIR" -type f \( -name "build.gradle" -o -name "build.gradle.kts" \) -print0 | while IFS= read -r -d '' f; do
-            sed -i 's/JavaVersion.VERSION_1_8/JavaVersion.VERSION_17/g' "$f"
-            sed -i 's/jvmTarget[[:space:]]*=[[:space:]]*"1.8"/jvmTarget = "17"/g' "$f"
-            sed -i 's/jvmTarget[[:space:]]*=[[:space:]]*"8"/jvmTarget = "17"/g' "$f"
-          done
+          python3 - <<'PY'
+          from pathlib import Path
+          import os
+
+          p = Path(os.environ["PROJECT_DIR"]) / "app" / "build.gradle.kts"
+          s = p.read_text()
+
+          s = s.replace(
+              '    compileSdk = 35\n',
+              '    compileSdk = 35\n    compileOptions {\n        sourceCompatibility = JavaVersion.VERSION_17\n        targetCompatibility = JavaVersion.VERSION_17\n    }\n'
+          )
+
+          s = s.replace(
+              '    }\n}\ndependencies {',
+              '    }\n    kotlinOptions {\n        jvmTarget = "17"\n    }\n}\ndependencies {'
+          )
+
+          p.write_text(s)
+          print(p.read_text())
+          PY
 
       - name: Set up Gradle
         uses: gradle/actions/setup-gradle@v4
