@@ -48,33 +48,12 @@ jobs:
         with:
           gradle-version: "8.9"
 
-      - name: Force Java 17
-        run: |
-          mkdir -p /tmp/gradle-init
-          cat > /tmp/gradle-init/jvm.gradle <<'EOF'
-          allprojects {
-            tasks.withType(JavaCompile).configureEach {
-              options.release = 17
-            }
-            plugins.withId("org.jetbrains.kotlin.android") {
-              tasks.configureEach {
-                if (name.toLowerCase().contains("kotlin")) {
-                  try {
-                    compilerOptions.jvmTarget.set(
-                      org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_17
-                    )
-                  } catch (Exception ignored) {
-                  }
-                }
-              }
-            }
-          }
-          EOF
-
+         
       - name: Build APK
         run: |
           cd "$PROJECT_DIR"
-          gradle assembleDebug --no-daemon --stacktrace --init-script /tmp/gradle-init/jvm.gradle
+          gradle assembleDebug --no-daemon --stacktrace \
+            -Pkotlin.jvm.target.validation=warning
 
       - name: Upload APK
         if: success()
