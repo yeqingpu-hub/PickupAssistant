@@ -17,7 +17,20 @@ jobs:
         run: |
           unzip -q "取件助手_Android_第五版_自动扫码.zip" -d project
           sed -i 's/ android:description="[^"]*"//' project/app/src/main/res/xml/accessibility_service_config.xml
-
+          python3 - <<'PY'
+          from pathlib import Path
+          p = next(Path("project").rglob("MainActivity.kt"))
+          lines = p.read_text().splitlines()
+          out = []
+          found = False
+          for line in lines:
+              if "val autoOpen =" in line:
+                  if found:
+                      continue
+                  found = True
+              out.append(line)
+          p.write_text("\n".join(out) + "\n")
+          PY
       - name: Find Android project
         run: |
           PROJECT_DIR=$(find project -type f \( -name settings.gradle.kts -o -name settings.gradle \) -print -quit | xargs dirname)
