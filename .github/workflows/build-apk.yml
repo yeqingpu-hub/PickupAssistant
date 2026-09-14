@@ -15,7 +15,7 @@ jobs:
 
       - name: Unzip project
         run: |
-          unzip -q "取件助手_Android_第四版_扫码修正版.zip" -d project
+          unzip -q "取件助手_Android_第五版_自动扫码.zip" -d project
 
       - name: Find Android project
         run: |
