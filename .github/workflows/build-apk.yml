@@ -15,7 +15,7 @@ jobs:
 
       - name: Unzip project
         run: |
-          unzip -q "取件助手_Android_第五版_自动扫码.zip" -d project
+          unzip -q "取件助手_Android_第五版_最终修正版.zip" -d project
           sed -i 's/ android:description="[^"]*"//' project/app/src/main/res/xml/accessibility_service_config.xml
           python3 - <<'PY'
           from pathlib import Path
