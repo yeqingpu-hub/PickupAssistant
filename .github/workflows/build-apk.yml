@@ -15,7 +15,7 @@ jobs:
 
       - name: Unzip project
         run: |
-          unzip -q "取件助手_Android_第二版.zip" -d project
+          unzip -q "取件助手_Android_第三版_修复应用跳转.zip" -d project
 
       - name: Find Android project
         run: |
