@@ -45,11 +45,16 @@ jobs:
       - name: Set up Android SDK
         uses: android-actions/setup-android@v3
         with:
-            packages: |
-                     platform-tools
-                     platforms;android-35
-                     build-tools;35.0.0
-
+         accept-android-sdk-licenses: true
+      - name: Install Android SDK
+        shell: bash
+        run: |
+           SDK_ROOT="${ANDROID_HOME:-/usr/local/lib/android/sdk}"
+           SDKMANAGER=$(find "$SDK_ROOT/cmdline-tools" -type f -name sdkmanager -path '*/bin/sdkmanager' | sort -V | tail -n 1)
+           echo "Using sdkmanager: $SDKMANAGER"
+           yes | "$SDKMANAGER" --licenses >/dev/null || true
+           "$SDKMANAGER" "platform-tools" "platforms;android-35" "build-tools;35.0.0"
+           
       - name: Fix JVM target
         run: |
           python3 - <<'PY'
